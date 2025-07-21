@@ -267,6 +267,18 @@ const ProfileScreen = ({ navigation }) => {
               you go. Developed with heartfelt intention, Avian uses cutting-edge AI technologies like gaze detection and
               automatic recording to provide a proactive layer of safety in everyday environments — especially designed with
               women’s security in mind.
+
+              {'\n\n'}
+
+              This app was built out of love and concern, inspired by someone special — to ensure that even in the absence of
+              loved ones, there's always a companion looking out for you. Whether you're commuting, walking alone, or just
+              need the peace of mind that someone is virtually by your side, Avian is here for you.
+
+              {'\n\n'}
+
+              My dream is for every person to feel a little more protected, a little more empowered, and a lot more valued
+              simply by having Avian with them. Thank you for believing in this idea, for giving it a space on your phone and
+              in your life. Let’s walk safer, together.
             </Text>
           </ScrollView>
           <TouchableOpacity
