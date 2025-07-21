@@ -15,49 +15,54 @@ export default function LoginScreen({ navigation }) {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState(''); // ✅ Email state
 
+  // ------------------- SIGNUP --------------------
   const handleSignup = async () => {
-    if (!username || !password) {
-      Alert.alert('Please enter both username and password.');
+    if (!username || !password || !email) {
+      Alert.alert('Please enter username, password, and email.');
       return;
     }
+
     try {
-      await AsyncStorage.setItem(
-        'userData',
-        JSON.stringify({ username, password })
-      );
-      await AsyncStorage.setItem('username', username); // ✅ Store username
+      const userObject = { username, password, email };
+      await AsyncStorage.setItem(`user_${username}`, JSON.stringify(userObject)); // ✅ Store with key per user
+      await AsyncStorage.setItem('username', username); // current user
 
       Alert.alert('Account created successfully!');
-      setIsLogin(true); // Switch to login screen after signup
+      setIsLogin(true);
       setUsername('');
       setPassword('');
+      setEmail('');
     } catch (e) {
-      console.error('Error saving user data', e);
-      Alert.alert('Failed to save user data.');
+      console.error('Signup Error:', e);
+      Alert.alert('Error saving user data.');
     }
   };
 
+  // ------------------- LOGIN --------------------
   const handleLogin = async () => {
     if (!username || !password) {
       Alert.alert('Please enter both username and password.');
       return;
     }
+
     try {
-      const storedData = await AsyncStorage.getItem('userData');
-      if (!storedData) {
-        Alert.alert('No user found. Please signup first.');
+      const userData = await AsyncStorage.getItem(`user_${username}`);
+      if (!userData) {
+        Alert.alert('No such user found. Please signup.');
         return;
       }
-      const parsed = JSON.parse(storedData);
-      if (parsed && parsed.username === username && parsed.password === password) {
-        await AsyncStorage.setItem('username', username); // ✅ Store username again here
+
+      const parsed = JSON.parse(userData);
+      if (parsed.password === password) {
+        await AsyncStorage.setItem('username', username); // active user
         navigation.navigate('MainApp');
       } else {
-        Alert.alert('Invalid username or password.');
+        Alert.alert('Invalid password.');
       }
     } catch (e) {
-      console.error('Error reading user data', e);
+      console.error('Login Error:', e);
       Alert.alert('Failed to read user data.');
     }
   };
@@ -78,6 +83,17 @@ export default function LoginScreen({ navigation }) {
         autoCorrect={false}
       />
 
+      {!isLogin && (
+        <TextInput
+          placeholder="Email"
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
+        />
+      )}
+
       <TextInput
         placeholder="Password"
         style={styles.input}
@@ -95,15 +111,14 @@ export default function LoginScreen({ navigation }) {
 
       <TouchableOpacity onPress={() => setIsLogin(!isLogin)}>
         <Text style={styles.switchText}>
-          {isLogin
-            ? "Don't have an account? Signup"
-            : "Already have an account? Login"}
+          {isLogin ? "Don't have an account? Signup" : "Already have an account? Login"}
         </Text>
       </TouchableOpacity>
     </KeyboardAvoidingView>
   );
 }
 
+// ------------------ STYLES -------------------
 const styles = StyleSheet.create({
   container: {
     flex: 1,
