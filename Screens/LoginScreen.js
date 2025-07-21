@@ -15,25 +15,23 @@ export default function LoginScreen({ navigation }) {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [email, setEmail] = useState(''); // ✅ Email state
 
   // ------------------- SIGNUP --------------------
   const handleSignup = async () => {
-    if (!username || !password || !email) {
-      Alert.alert('Please enter username, password, and email.');
+    if (!username || !password) {
+      Alert.alert('Please enter both username and password.');
       return;
     }
 
     try {
-      const userObject = { username, password, email };
-      await AsyncStorage.setItem(`user_${username}`, JSON.stringify(userObject)); // ✅ Store with key per user
+      const userObject = { username, password };
+      await AsyncStorage.setItem(`user_${username}`, JSON.stringify(userObject));
       await AsyncStorage.setItem('username', username); // current user
 
       Alert.alert('Account created successfully!');
       setIsLogin(true);
       setUsername('');
       setPassword('');
-      setEmail('');
     } catch (e) {
       console.error('Signup Error:', e);
       Alert.alert('Error saving user data.');
@@ -82,17 +80,6 @@ export default function LoginScreen({ navigation }) {
         autoCapitalize="none"
         autoCorrect={false}
       />
-
-      {!isLogin && (
-        <TextInput
-          placeholder="Email"
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-        />
-      )}
 
       <TextInput
         placeholder="Password"
